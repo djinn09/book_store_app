@@ -24,14 +24,18 @@ func main() {
 		//Convert your cached html string to byte array
 		c.Writer.Write([]byte(HtmlString))
 	})
-	r.GET("/books", controllers.FindBooks) // new
-	r.POST("/books", controllers.CreateBook)
-	r.GET("/books/:id", controllers.FindBook)
-	r.PATCH("/books/:id", controllers.UpdateBook)
-	r.DELETE("/books/:id", controllers.DeleteBook)
-	r.GET("/users", controllers.FindUsers)
-	r.POST("/users", controllers.CreateUser)
 	r.POST("/auth/login", controllers.LoginUser)
+	authorized := r.Group("/")
+	authorized.Use(controllers.JWTAuthMiddleware())
+	{
+		authorized.GET("books", controllers.FindBooks) // new
+		authorized.POST("/books", controllers.CreateBook)
+		authorized.GET("/books/:id", controllers.FindBook)
+		authorized.PATCH("/books/:id", controllers.UpdateBook)
+		authorized.DELETE("/books/:id", controllers.DeleteBook)
+		authorized.GET("/users", controllers.FindUsers)
+		authorized.POST("/users", controllers.CreateUser)
+	}
 
 	r.Run()
 }

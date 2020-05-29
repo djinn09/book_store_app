@@ -3,14 +3,14 @@ package controllers
 import (
 	"crud/models"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
 )
 
+// CreateToken Takes userid & generate token
 func CreateToken(userid uint) (string, error) {
 	var err error
 	//Creating Access Token
@@ -27,6 +27,7 @@ func CreateToken(userid uint) (string, error) {
 	return token, nil
 }
 
+// VerifyToken Taken Token verify if is valid token
 func VerifyToken(tokenString string) bool {
 	var isValid = false
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -65,8 +66,10 @@ func LoginUser(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, "Invalid json provided")
 		return
 	}
-	var user models.Users
-	c.Bind(&user)
+	user := models.Users{
+		Username: u.Username,
+		Password: u.Password,
+	}
 	if err := models.DB.Find(&user).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Invalid Credentials"})
 		return
