@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"crud/models"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -87,7 +86,6 @@ func UpdateBook(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Record not found!"})
 		return
 	}
-	fmt.Println("Herre")
 	// Validate input
 	var input UpdateBookInput
 	if err := c.ShouldBindJSON(&input); err != nil {
